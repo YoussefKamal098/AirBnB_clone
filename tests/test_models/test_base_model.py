@@ -76,7 +76,9 @@ class TestBaseModelInstantiation(unittest.TestCase):
         date = datetime.today()
         date_isoformat = date.isoformat()
 
-        base_model = BaseModel(id="345", created_at=date_isoformat, updated_at=date_isoformat)
+        base_model = BaseModel(id="345",
+                               created_at=date_isoformat,
+                               updated_at=date_isoformat)
         self.assertEqual(base_model.id, "345")
         self.assertEqual(base_model.created_at, date)
         self.assertEqual(base_model.updated_at, date)
@@ -89,7 +91,10 @@ class TestBaseModelInstantiation(unittest.TestCase):
         date = datetime.today()
         date_isoformat = date.isoformat()
 
-        base_model = BaseModel("12", id="345", created_at=date_isoformat, updated_at=date_isoformat)
+        base_model = BaseModel("12", id="345",
+                               created_at=date_isoformat,
+                               updated_at=date_isoformat
+                               )
         self.assertEqual(base_model.id, "345")
         self.assertEqual(base_model.created_at, date)
         self.assertEqual(base_model.updated_at, date)
