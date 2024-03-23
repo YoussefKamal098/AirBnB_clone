@@ -81,7 +81,7 @@ class FileStorage:
             return None
 
         key = FileStorage._get_obj_key(model_name, _id)
-        if key not in FileStorage.__objects:
+        if key not in self.__objects:
             print("** no instance found **")
             return None
 
