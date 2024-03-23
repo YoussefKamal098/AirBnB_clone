@@ -208,7 +208,10 @@ class CreateCommand(AirBnBCommand):
         if not model_class:
             return
 
-        model_class().save()
+        instance = model_class()
+        print(instance.id)
+
+        instance.save()
 
 
 class ShowCommand(AirBnBCommand):
