@@ -379,7 +379,6 @@ class UpdateCommand(AirBnBCommand):
     __tokens = {
             "model_name": None,
             "instance_id": None,
-            "dictionary": None,
             "attribute_name": None,
             "attribute_value": None
     }
