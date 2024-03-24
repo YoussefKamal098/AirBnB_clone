@@ -5,6 +5,7 @@ a command-line interface for an AirBnB-like application.
 """
 
 import cmd
+import shlex
 from console_commands import AirBnBCommand
 from console_commands import CreateCommand
 from console_commands import ShowCommand
@@ -139,7 +140,7 @@ class HBNBCommand(cmd.Cmd):
             str: The processed command line input.
 
         """
-        tokens = line.split()[1:]
+        tokens = shlex.split(line)[1:]
         AirBnBCommand.set_tokens(tokens)
         return line.strip()
 
