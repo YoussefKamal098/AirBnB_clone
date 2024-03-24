@@ -162,7 +162,7 @@ class HBNBCommand(cmd.Cmd):
                 args = ast.literal_eval(args_literal)
             else:
                 args = []
-        except SyntaxError as err:
+        except (SyntaxError, ValueError) as err:
             print(err)
             super().default(line)
             return

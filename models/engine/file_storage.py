@@ -151,8 +151,11 @@ class FileStorage:
             attribute_name: the name of the attribute
             value: the new value of the attribute
         """
-        if (not isinstance(attribute_name, str) or
-                not hasattr(obj, attribute_name)):
+        if not obj or not isinstance(attribute_name, str):
+            return
+
+        if not hasattr(obj, attribute_name):
+            setattr(obj, attribute_name, value)
             return
 
         attribute = getattr(obj, attribute_name)
