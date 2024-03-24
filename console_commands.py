@@ -24,7 +24,6 @@ class AirBnBCommand(ABC):
     command objects in an AirBnB application.
 
     Attributes:
-        __tokens (dict): A dictionary containing tokens used by the command.
         _storage (object): A storage object used to interact with the database.
 
     Methods:
@@ -41,13 +40,6 @@ class AirBnBCommand(ABC):
         execute(self, line): Abstract method to execute the command.
 
     """
-
-    __tokens = {
-            "model_name": None,
-            "instance_id": None,
-            "attribute_name": None,
-            "attribute_value": None
-    }
 
     def __init__(self, storage):
         """
@@ -71,28 +63,15 @@ class AirBnBCommand(ABC):
         """
         pass
 
-    @classmethod
-    def reset_tokens(cls):
-        """
-        Resets the tokens dictionary to default values.
+    @abstractmethod
+    def reset_tokens(self):
+        pass
 
-        """
-        for key in cls.__tokens.keys():
-            cls.__tokens[key] = None
+    @abstractmethod
+    def set_tokens(self, tokens):
+        pass
 
-    @classmethod
-    def set_tokens(cls, tokens):
-        """
-        Sets the tokens based on the provided values.
-
-        Parameters:
-            tokens (list): A list of token values.
-
-        """
-        for key, value in zip(cls.__tokens, tokens):
-            cls.__tokens[key] = value
-
-    def get_model_name(self):
+    def get_model_name(self, tokens):
         """
         Retrieves the model name token.
 
@@ -100,7 +79,7 @@ class AirBnBCommand(ABC):
             str: The model name token.
 
         """
-        model_name = self.__tokens.get("model_name", None)
+        model_name = tokens.get("model_name", None)
 
         if not model_name:
             print("** class name missing **")
@@ -108,7 +87,7 @@ class AirBnBCommand(ABC):
 
         return model_name
 
-    def get_instance_id(self):
+    def get_instance_id(self, tokens):
         """
         Retrieves the instance ID token.
 
@@ -116,7 +95,7 @@ class AirBnBCommand(ABC):
             str: The instance ID token.
 
         """
-        _id = self.__tokens.get("instance_id", None)
+        _id = tokens.get("instance_id", None)
 
         if not _id:
             print("** instance id missing **")
@@ -124,7 +103,7 @@ class AirBnBCommand(ABC):
 
         return _id
 
-    def get_attribute_name_value_pair(self):
+    def get_attribute_name_value_pair(self, tokens):
         """
         Retrieves attribute name-value pair tokens.
 
@@ -132,8 +111,8 @@ class AirBnBCommand(ABC):
             dict: A dictionary containing attribute name-value pair.
 
         """
-        attribute_name = self.__tokens.get("attribute_name")
-        attribute_value = self.__tokens.get("attribute_value")
+        attribute_name = tokens.get("attribute_name", None)
+        attribute_value = tokens.get("attribute_value", None)
 
         if not attribute_name:
             print("** attribute name missing **")
@@ -145,7 +124,7 @@ class AirBnBCommand(ABC):
         return {"attribute_name": attribute_name,
                 "attribute_value": attribute_value}
 
-    def get_model_class(self):
+    def get_model_class(self, tokens):
         """
         Retrieves the model class based on the model name.
 
@@ -153,7 +132,7 @@ class AirBnBCommand(ABC):
             class: The model class.
 
         """
-        model_name = self.get_model_name()
+        model_name = self.get_model_name(tokens)
         if not model_name:
             return None
 
@@ -163,7 +142,7 @@ class AirBnBCommand(ABC):
 
         return model_class
 
-    def get_model_instance(self):
+    def get_model_instance(self, tokens):
         """
         Retrieves the model instance based on the model class and instance ID.
 
@@ -171,11 +150,11 @@ class AirBnBCommand(ABC):
             tuple: A tuple containing the model class and model instance.
 
         """
-        model_class = self.get_model_class()
+        model_class = self.get_model_class(tokens)
         if not model_class:
             return None
 
-        _id = self.get_instance_id()
+        _id = self.get_instance_id(tokens)
         if not _id:
             return None
 
@@ -196,6 +175,29 @@ class CreateCommand(AirBnBCommand):
 
     """
 
+    __tokens = {
+            "model_name": None,
+    }
+
+    def set_tokens(self, tokens):
+        """
+        Sets the tokens based on the provided values.
+
+        Parameters:
+            tokens (list): A list of token values.
+
+        """
+        for key, value in zip(self.__tokens, tokens):
+            self.__tokens[key] = value
+
+    def reset_tokens(self):
+        """
+        Resets the tokens dictionary to default values.
+
+        """
+        for key in self.__tokens.keys():
+            self.__tokens[key] = None
+
     def execute(self, line):
         """
         Executes the create command.
@@ -204,7 +206,7 @@ class CreateCommand(AirBnBCommand):
             line (str): The command line input.
 
         """
-        model_class = self.get_model_class()
+        model_class = self.get_model_class(self.__tokens)
         if not model_class:
             return
 
@@ -223,6 +225,29 @@ class ShowCommand(AirBnBCommand):
         execute(self, line): Executes the show command.
 
     """
+    __tokens = {
+            "model_name": None,
+            "instance_id": None,
+    }
+
+    def set_tokens(self, tokens):
+        """
+        Sets the tokens based on the provided values.
+
+        Parameters:
+            tokens (list): A list of token values.
+
+        """
+        for key, value in zip(self.__tokens, tokens):
+            self.__tokens[key] = value
+
+    def reset_tokens(self):
+        """
+        Resets the tokens dictionary to default values.
+
+        """
+        for key in self.__tokens.keys():
+            self.__tokens[key] = None
 
     def execute(self, line):
         """
@@ -232,7 +257,7 @@ class ShowCommand(AirBnBCommand):
             line (str): The command line input.
 
         """
-        model_instance = self.get_model_instance()
+        model_instance = self.get_model_instance(self.__tokens)
         if not model_instance:
             return
 
@@ -250,6 +275,30 @@ class DestroyCommand(AirBnBCommand):
 
     """
 
+    __tokens = {
+            "model_name": None,
+            "instance_id": None,
+    }
+
+    def set_tokens(self, tokens):
+        """
+        Sets the tokens based on the provided values.
+
+        Parameters:
+            tokens (list): A list of token values.
+
+        """
+        for key, value in zip(self.__tokens, tokens):
+            self.__tokens[key] = value
+
+    def reset_tokens(self):
+        """
+        Resets the tokens dictionary to default values.
+
+        """
+        for key in self.__tokens.keys():
+            self.__tokens[key] = None
+
     def execute(self, line):
         """
         Executes the destroy command.
@@ -258,7 +307,7 @@ class DestroyCommand(AirBnBCommand):
         line (str): The command line input.
 
         """
-        model_instance = self.get_model_instance()
+        model_instance = self.get_model_instance(self.__tokens)
         if not model_instance:
             return
 
@@ -275,6 +324,28 @@ class AllCommand(AirBnBCommand):
         execute(self, line): Executes the all command.
 
     """
+    __tokens = {
+            "model_name": None,
+    }
+
+    def set_tokens(self, tokens):
+        """
+        Sets the tokens based on the provided values.
+
+        Parameters:
+            tokens (list): A list of token values.
+
+        """
+        for key, value in zip(self.__tokens, tokens):
+            self.__tokens[key] = value
+
+    def reset_tokens(self):
+        """
+        Resets the tokens dictionary to default values.
+
+        """
+        for key in self.__tokens.keys():
+            self.__tokens[key] = None
 
     def execute(self, line):
         """
@@ -288,7 +359,7 @@ class AllCommand(AirBnBCommand):
             print(self._storage.find_all())
             return
 
-        model_class = self.get_model_class()
+        model_class = self.get_model_class(self.__tokens)
         if not model_class:
             return
 
@@ -305,6 +376,33 @@ class UpdateCommand(AirBnBCommand):
 
     """
 
+    __tokens = {
+            "model_name": None,
+            "instance_id": None,
+            "dictionary": None,
+            "attribute_name": None,
+            "attribute_value": None
+    }
+
+    def set_tokens(self, tokens):
+        """
+        Sets the tokens based on the provided values.
+
+        Parameters:
+            tokens (list): A list of token values.
+
+        """
+        for key, value in zip(self.__tokens, tokens):
+            self.__tokens[key] = value
+
+    def reset_tokens(self):
+        """
+        Resets the tokens dictionary to default values.
+
+        """
+        for key in self.__tokens.keys():
+            self.__tokens[key] = None
+
     def execute(self, line):
         """
         Executes the update command.
@@ -313,12 +411,12 @@ class UpdateCommand(AirBnBCommand):
             line (str): The command line input.
 
         """
-        model_instance = self.get_model_instance()
+        model_instance = self.get_model_instance(self.__tokens)
         if not model_instance:
             return
 
         model_class, instance = model_instance
-        attribute_name_value_pair = self.get_attribute_name_value_pair()
+        attribute_name_value_pair = self.get_attribute_name_value_pair(self.__tokens)
         if not attribute_name_value_pair:
             return
 
