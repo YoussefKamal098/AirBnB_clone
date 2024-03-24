@@ -8,7 +8,7 @@ import cmd
 import shlex
 # import ast
 # import re
-# import subprocess
+import subprocess
 from console_commands import CreateCommand
 from console_commands import ShowCommand
 from console_commands import AllCommand
@@ -123,20 +123,20 @@ class HBNBCommand(cmd.Cmd):
         self.save_history()
         return True
 
-    # def do_clear(self, line):
-    #     """
-    #     Clears the Screen
-    #     """
-    #     result = None
-    #
-    #     try:
-    #         result = subprocess.run(["clear"], capture_output=True)
-    #     except OSError as err:
-    #         print(err)
-    #         return
-    #
-    #     print(result.stderr.decode(), end="")
-    #     print(result.stdout.decode(), end="")
+    def do_clear(self, line):
+        """
+        Clears the Screen
+        """
+        result = None
+
+        try:
+            result = subprocess.run(["clear"], capture_output=True)
+        except OSError as err:
+            print(err)
+            return
+
+        print(result.stderr.decode(), end="")
+        print(result.stdout.decode(), end="")
 
     def emptyline(self):
         """
