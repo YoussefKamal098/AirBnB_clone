@@ -6,9 +6,9 @@ a command-line interface for an AirBnB-like application.
 
 import cmd
 import shlex
-import ast
-import re
-import subprocess
+# import ast
+# import re
+# import subprocess
 from console_commands import CreateCommand
 from console_commands import ShowCommand
 from console_commands import AllCommand
@@ -124,20 +124,20 @@ class HBNBCommand(cmd.Cmd):
         self.save_history()
         return True
 
-    def do_clear(self, line):
-        """
-        Clears the Screen
-        """
-        result = None
-
-        try:
-            result = subprocess.run(["clear"], capture_output=True)
-        except OSError as err:
-            print(err)
-            return
-
-        print(result.stderr.decode(), end="")
-        print(result.stdout.decode(), end="")
+    # def do_clear(self, line):
+    #     """
+    #     Clears the Screen
+    #     """
+    #     result = None
+    #
+    #     try:
+    #         result = subprocess.run(["clear"], capture_output=True)
+    #     except OSError as err:
+    #         print(err)
+    #         return
+    #
+    #     print(result.stderr.decode(), end="")
+    #     print(result.stdout.decode(), end="")
 
     def emptyline(self):
         """
@@ -146,29 +146,29 @@ class HBNBCommand(cmd.Cmd):
         """
         pass
 
-    def default(self, line):
-        pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\((.*)\)$', line)
-        if not pattern:
-            super().default(line)
-            return
-
-        class_name, function_name, args_literal = pattern.groups()
-        if function_name not in self.__airbnb_commands:
-            super().default(line)
-            return
-
-        args = None
-        try:
-            if args_literal:
-                args = ast.literal_eval(args_literal)
-        except SyntaxError as err:
-            print(err)
-            super().default(line)
-            return
-
-        tokens = [class_name, args]
-        self.__airbnb_commands[function_name].set_tokens(tokens)
-        self.__airbnb_commands[function_name].execute(line)
+    # def default(self, line):
+    #     pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\((.*)\)$', line)
+    #     if not pattern:
+    #         super().default(line)
+    #         return
+    #
+    #     class_name, function_name, args_literal = pattern.groups()
+    #     if function_name not in self.__airbnb_commands:
+    #         super().default(line)
+    #         return
+    #
+    #     args = None
+    #     try:
+    #         if args_literal:
+    #             args = ast.literal_eval(args_literal)
+    #     except SyntaxError as err:
+    #         print(err)
+    #         super().default(line)
+    #         return
+    #
+    #     tokens = [class_name, args]
+    #     self.__airbnb_commands[function_name].set_tokens(tokens)
+    #     self.__airbnb_commands[function_name].execute(line)
 
     def precmd(self, line):
         """
