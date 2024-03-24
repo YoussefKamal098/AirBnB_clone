@@ -14,6 +14,7 @@ from console_commands import ShowCommand
 from console_commands import AllCommand
 from console_commands import DestroyCommand
 from console_commands import UpdateCommand
+from console_commands import CountCommand
 from models import storage
 import readline
 
@@ -50,7 +51,8 @@ class HBNBCommand(cmd.Cmd):
         "show": ShowCommand(storage),
         "destroy": DestroyCommand(storage),
         "all": AllCommand(storage),
-        "update": UpdateCommand(storage)
+        "update": UpdateCommand(storage),
+        "count": CountCommand(storage)
     }
 
     def preloop(self) -> None:
@@ -61,21 +63,21 @@ class HBNBCommand(cmd.Cmd):
         Create a new class instance and print its id.
         Usage: create <class>
         """
-        self.__airbnb_commands["create"].execute(line)
+        self.__airbnb_commands["create"].execute()
 
     def do_show(self, line):
         """
         Display the string representation of a class instance of a given id.
         Usage: show <class> <id>
         """
-        self.__airbnb_commands["show"].execute(line)
+        self.__airbnb_commands["show"].execute()
 
     def do_destroy(self, line):
         """
         Delete a class instance of a given id.
         Usage: destroy <class> <id>
         """
-        self.__airbnb_commands["destroy"].execute(line)
+        self.__airbnb_commands["destroy"].execute()
 
     def do_all(self, line):
         """
@@ -84,7 +86,7 @@ class HBNBCommand(cmd.Cmd):
 
         Usage: all or all <class>
         """
-        self.__airbnb_commands["all"].execute(line)
+        self.__airbnb_commands["all"].execute()
 
     def do_update(self, line):
         """
@@ -93,7 +95,7 @@ class HBNBCommand(cmd.Cmd):
 
         Usage: update <class> <id> <attribute_name> <attribute_value>
         """
-        self.__airbnb_commands["update"].execute(line)
+        self.__airbnb_commands["update"].execute()
 
     def do_quit(self, line):
         """
@@ -127,8 +129,6 @@ class HBNBCommand(cmd.Cmd):
         """
         Clears the Screen
         """
-        result = None
-
         try:
             result = subprocess.run(["clear"], capture_output=True)
         except OSError as err:
@@ -138,45 +138,49 @@ class HBNBCommand(cmd.Cmd):
         print(result.stderr.decode(), end="")
         print(result.stdout.decode(), end="")
 
-    def emptyline(self):
-        """
-        Handles empty input.
-
-        """
-        pass
-
     def default(self, line):
-        pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\((.*)\)$', line)
-        if not pattern:
+        extracted_data = self.extract_method_call(line)
+
+        if not extracted_data:
             super().default(line)
             return
 
-        class_name, function_name, args_literal = pattern.groups()
-        if function_name not in self.__airbnb_commands:
-            super().default(line)
-            return
-
-        args = None
-        try:
-            if args_literal:
-                args = ast.literal_eval(args_literal)
-            else:
-                args = []
-        except (SyntaxError, ValueError) as err:
-            print(err)
-            super().default(line)
-            return
+        class_name, function_name, function_args = extracted_data
 
         tokens = [class_name]
 
-        if isinstance(args, (list, tuple)):
-            tokens.extend(args)
+        if isinstance(function_args, tuple):
+            tokens.extend(function_args)
         else:
-            tokens.append(args)
+            tokens.append(function_args)
 
-        print(tokens)
         self.__airbnb_commands[function_name].set_tokens(tokens)
-        self.__airbnb_commands[function_name].execute(line)
+        self.__airbnb_commands[function_name].execute()
+
+    def extract_method_call(self, line):
+        pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\((.*)\)$', line)
+        if not pattern:
+            return None
+
+        class_name, function_name, function_args_literal = pattern.groups()
+        if function_name not in self.__airbnb_commands:
+            return None
+
+        args = None
+        try:
+            if function_args_literal:
+                args = ast.literal_eval(function_args_literal)
+        except (SyntaxError, ValueError) as err:
+            print(err)
+            return None
+
+        return class_name, function_name, args
+
+    def emptyline(self):
+        """
+        Handles empty input.
+        """
+        pass
 
     def precmd(self, line):
         """
@@ -203,24 +207,14 @@ class HBNBCommand(cmd.Cmd):
 
         return line.strip()
 
-    def add_history(self, line):
-        self.__history.append(line)
-        history_length = len(self.__history)
-
-        if history_length > self.__MAX_HIS:
-            self.__history.pop(0)
-
     @staticmethod
     def parse_line(line):
-        tokens = []
-
         try:
             tokens = shlex.split(line)
+            return tokens
         except ValueError as err:
             print(err)
             return ""
-
-        return tokens
 
     def postcmd(self, stop, line):
         """
@@ -239,6 +233,13 @@ class HBNBCommand(cmd.Cmd):
 
         self.__current_cmd = ""
         return stop
+
+    def add_history(self, line):
+        self.__history.append(line)
+        history_length = len(self.__history)
+
+        if history_length > self.__MAX_HIS:
+            self.__history.pop(0)
 
     def load_history(self):
         """Loads the command history from the file (if it exists)."""

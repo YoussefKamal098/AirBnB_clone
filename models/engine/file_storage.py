@@ -142,6 +142,11 @@ class FileStorage:
         FileStorage._update_obj_attribute(obj, attribute_name, attribute_value)
         self.save()
 
+    def update_obj_attributes(self, model_name, _id, **kwargs):
+        for key, value in kwargs.items():
+            self.update_obj_attribute(
+                model_name, _id, attribute_name=key, attribute_value=value)
+
     @staticmethod
     def _update_obj_attribute(obj, attribute_name, value):
         """
@@ -170,6 +175,23 @@ class FileStorage:
             return
 
         setattr(obj, attribute_name, attribute_type(value))
+
+    def count(self, model_name):
+        """
+        Finds and returns all objects of a given model
+        Parameters:
+            model_name: the name of the model
+        Returns:
+            A list of objects if found, otherwise an empty list
+        """
+        if not model_name:
+            return None
+
+        if model_name not in self.get_models_names():
+            return None
+
+        return sum(1 for key in self.__objects.keys()
+                   if key.startswith(model_name))
 
     def _deserialize(self, dictionary):
         """

@@ -53,13 +53,9 @@ class AirBnBCommand(ABC):
         self._storage = storage
 
     @abstractmethod
-    def execute(self, line):
+    def execute(self):
         """
         Abstract method to execute the command.
-
-        Parameters:
-            line (str): The command line input.
-
         """
         pass
 
@@ -198,13 +194,9 @@ class CreateCommand(AirBnBCommand):
         for key in self.__tokens.keys():
             self.__tokens[key] = None
 
-    def execute(self, line):
+    def execute(self):
         """
         Executes the create command.
-
-        Parameters:
-            line (str): The command line input.
-
         """
         model_class = self.get_model_class(self.__tokens)
         if not model_class:
@@ -249,13 +241,9 @@ class ShowCommand(AirBnBCommand):
         for key in self.__tokens.keys():
             self.__tokens[key] = None
 
-    def execute(self, line):
+    def execute(self):
         """
         Executes the show command.
-
-        Parameters:
-            line (str): The command line input.
-
         """
         model_instance = self.get_model_instance(self.__tokens)
         if not model_instance:
@@ -299,13 +287,9 @@ class DestroyCommand(AirBnBCommand):
         for key in self.__tokens.keys():
             self.__tokens[key] = None
 
-    def execute(self, line):
+    def execute(self):
         """
         Executes the destroy command.
-
-        Parameters
-        line (str): The command line input.
-
         """
         model_instance = self.get_model_instance(self.__tokens)
         if not model_instance:
@@ -347,15 +331,12 @@ class AllCommand(AirBnBCommand):
         for key in self.__tokens.keys():
             self.__tokens[key] = None
 
-    def execute(self, line):
+    def execute(self):
         """
         Executes the all command.
-
-        Parameters:
-            line (str): The command line input.
-
         """
-        if not line:
+        model_name = self.__tokens.get("model_name", None)
+        if not model_name:
             print(self._storage.find_all())
             return
 
@@ -380,7 +361,7 @@ class UpdateCommand(AirBnBCommand):
             "model_name": None,
             "instance_id": None,
             "attribute_name": None,
-            "attribute_value": None
+            "attribute_value": None,
     }
 
     def set_tokens(self, tokens):
@@ -389,7 +370,57 @@ class UpdateCommand(AirBnBCommand):
 
         Parameters:
             tokens (list): A list of token values.
+        """
+        for key, value in zip(self.__tokens, tokens):
+            self.__tokens[key] = value
 
+    def reset_tokens(self):
+        """
+        Resets the tokens dictionary to default values.
+        """
+        for key in self.__tokens.keys():
+            self.__tokens[key] = None
+
+    def execute(self):
+        """
+        Executes the update command.
+        """
+        model_instance = self.get_model_instance(self.__tokens)
+        if not model_instance:
+            return
+
+        attribute_name_value_pair = self.get_attribute_name_value_pair(self.__tokens)
+        if not attribute_name_value_pair:
+            return
+
+        model_class, instance = model_instance
+
+        self._storage.update_obj_attribute(
+            model_class.__name__, instance.id,
+            **attribute_name_value_pair
+        )
+
+
+class CountCommand(AirBnBCommand):
+    """
+    UpdateCommand is a concrete subclass of AirBnBCommand for
+    updating attributes of an object.
+
+    Methods:
+        execute(self, line): Executes the update command.
+
+    """
+
+    __tokens = {
+            "model_name": None,
+    }
+
+    def set_tokens(self, tokens):
+        """
+        Sets the tokens based on the provided values.
+
+        Parameters:
+            tokens (list): A list of token values.
         """
         for key, value in zip(self.__tokens, tokens):
             self.__tokens[key] = value
@@ -402,24 +433,12 @@ class UpdateCommand(AirBnBCommand):
         for key in self.__tokens.keys():
             self.__tokens[key] = None
 
-    def execute(self, line):
+    def execute(self):
         """
         Executes the update command.
-
-        Parameters:
-            line (str): The command line input.
-
         """
-        model_instance = self.get_model_instance(self.__tokens)
-        if not model_instance:
+        model_class = self.get_model_class(self.__tokens)
+        if not model_class:
             return
 
-        model_class, instance = model_instance
-        attribute_name_value_pair = self.get_attribute_name_value_pair(self.__tokens)
-        if not attribute_name_value_pair:
-            return
-
-        self._storage.update_obj_attribute(
-            model_class.__name__, instance.id,
-            **attribute_name_value_pair
-        )
+        print(self._storage.count(model_name=model_class.__name__))
