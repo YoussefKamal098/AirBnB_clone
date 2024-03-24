@@ -160,12 +160,21 @@ class HBNBCommand(cmd.Cmd):
         try:
             if args_literal:
                 args = ast.literal_eval(args_literal)
+            else:
+                args = []
         except SyntaxError as err:
             print(err)
             super().default(line)
             return
 
-        tokens = [class_name, args]
+        tokens = [class_name]
+
+        if isinstance(args, (list, tuple)):
+            tokens.extend(args)
+        else:
+            tokens.append(args)
+
+        print(tokens)
         self.__airbnb_commands[function_name].set_tokens(tokens)
         self.__airbnb_commands[function_name].execute(line)
 
@@ -180,7 +189,7 @@ class HBNBCommand(cmd.Cmd):
             str: The processed command line input.
 
         """
-        # self.add_history(line)
+        self.add_history(line)
 
         tokens = self.parse_line(line)
         if not tokens:
