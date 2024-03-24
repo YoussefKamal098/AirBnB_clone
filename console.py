@@ -6,6 +6,7 @@ a command-line interface for an AirBnB-like application.
 
 import cmd
 import shlex
+import subprocess
 from console_commands import AirBnBCommand
 from console_commands import CreateCommand
 from console_commands import ShowCommand
@@ -48,51 +49,40 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, line):
         """
-        Executes the 'create' command.
-
-        Parameters:
-            line (str): The command line input.
-
+        Create a new class instance and print its id.
+        Usage: create <class>
         """
         self.__commands["create"].execute(line)
 
     def do_show(self, line):
         """
-        Executes the 'show' command.
-
-        Parameters:
-            line (str): The command line input.
-
+        Display the string representation of a class instance of a given id.
+        Usage: show <class> <id>
         """
         self.__commands["show"].execute(line)
 
     def do_destroy(self, line):
         """
-        Executes the 'destroy' command.
-
-        Parameters:
-            line (str): The command line input.
-
+        Delete a class instance of a given id.
+        Usage: destroy <class> <id>
         """
         self.__commands["destroy"].execute(line)
 
     def do_all(self, line):
         """
-        Executes the 'all' command.
+        Display string representations of all instances of a given class.
+        If no class is specified, displays all instantiated objects.
 
-        Parameters:
-            line (str): The command line input.
-
+        Usage: all or all <class>
         """
         self.__commands["all"].execute(line)
 
     def do_update(self, line):
         """
-        Executes the 'update' command.
+        Update a class instance of a given id by adding or updating
+        a given attribute key/value pair or dictionary.
 
-        Parameters:
-            line (str): The command line input.
-
+        Usage: update <class> <id> <attribute_name> <attribute_value>
         """
         self.__commands["update"].execute(line)
 
@@ -122,6 +112,18 @@ class HBNBCommand(cmd.Cmd):
         """
         return True
 
+    def do_clear(self, line):
+        result = None
+
+        try:
+            result = subprocess.run(["clear"], capture_output=True)
+        except OSError as err:
+            print(err)
+            return
+
+        print(result.stderr.decode(), end="")
+        print(result.stdout.decode(), end="")
+
     def emptyline(self):
         """
         Handles empty input.
@@ -140,9 +142,27 @@ class HBNBCommand(cmd.Cmd):
             str: The processed command line input.
 
         """
-        tokens = shlex.split(line)[1:]
-        AirBnBCommand.set_tokens(tokens)
+        tokens = self.parse_line(line)
+        if not tokens:
+            return ""
+
+        command = tokens[0]
+        if command in tokens:
+            AirBnBCommand.set_tokens(tokens[1:])
+
         return line.strip()
+
+    @staticmethod
+    def parse_line(line):
+        tokens = []
+
+        try:
+            tokens = shlex.split(line)
+        except ValueError as err:
+            print(err)
+            return ""
+
+        return tokens
 
     def postcmd(self, stop, line):
         """
