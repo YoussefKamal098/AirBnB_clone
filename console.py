@@ -15,7 +15,7 @@ from console_commands import AllCommand
 from console_commands import DestroyCommand
 from console_commands import UpdateCommand
 from models import storage
-# import readline
+import readline
 
 
 class HBNBCommand(cmd.Cmd):
@@ -40,9 +40,9 @@ class HBNBCommand(cmd.Cmd):
     """
 
     prompt = "(hbnb) "
-    # __history_file = ".airbnb_cmd_history.txt"
-    # __history = []
-    # __MAX_HIS = 100
+    __history_file = ".airbnb_cmd_history.txt"
+    __history = []
+    __MAX_HIS = 100
     __current_cmd = ""
 
     __airbnb_commands = {
@@ -53,9 +53,8 @@ class HBNBCommand(cmd.Cmd):
         "update": UpdateCommand(storage)
     }
 
-    # def __init__(self):
-    #     super().__init__()
-    #     self.load_history()
+    def preloop(self) -> None:
+        self.load_history()
 
     def do_create(self, line):
         """
@@ -107,7 +106,7 @@ class HBNBCommand(cmd.Cmd):
             bool: True to exit the interface.
 
         """
-        # self.save_history()
+        self.save_history()
         return True
 
     def do_EOF(self, line):
@@ -121,7 +120,7 @@ class HBNBCommand(cmd.Cmd):
             bool: True to exit the interface.
 
         """
-        # self.save_history()
+        self.save_history()
         return True
 
     # def do_clear(self, line):
@@ -195,12 +194,12 @@ class HBNBCommand(cmd.Cmd):
 
         return line.strip()
 
-    # def add_history(self, line):
-    #     self.__history.append(line)
-    #     history_length = len(self.__history)
-    #
-    #     if history_length > self.__MAX_HIS:
-    #         self.__history.pop(0)
+    def add_history(self, line):
+        self.__history.append(line)
+        history_length = len(self.__history)
+
+        if history_length > self.__MAX_HIS:
+            self.__history.pop(0)
 
     @staticmethod
     def parse_line(line):
@@ -232,27 +231,27 @@ class HBNBCommand(cmd.Cmd):
         self.__current_cmd = ""
         return stop
 
-    # def load_history(self):
-    #     """Loads the command history from the file (if it exists)."""
-    #     try:
-    #         with open(self.__history_file, "r") as file:
-    #             for line in file:
-    #                 line = line.strip("\n")
-    #                 self.__history.append(line)
-    #                 readline.add_history(line)
-    #
-    #             history_length = len(self.__history)
-    #             if history_length > self.__MAX_HIS:
-    #                 self.__history = self.__history[history_length - self.__MAX_HIS:]
-    #
-    #     except FileNotFoundError:
-    #         pass
+    def load_history(self):
+        """Loads the command history from the file (if it exists)."""
+        try:
+            with open(self.__history_file, "r") as file:
+                for line in file:
+                    line = line.strip("\n")
+                    self.__history.append(line)
+                    readline.add_history(line)
 
-    # def save_history(self):
-    #     """Saves the current command history to the file."""
-    #     with open(self.__history_file, "w") as file:
-    #         for line in self.__history:
-    #             file.write(f"{line}\n")
+                history_length = len(self.__history)
+                if history_length > self.__MAX_HIS:
+                    self.__history = self.__history[history_length - self.__MAX_HIS:]
+
+        except FileNotFoundError:
+            pass
+
+    def save_history(self):
+        """Saves the current command history to the file."""
+        with open(self.__history_file, "w") as file:
+            for line in self.__history:
+                file.write(f"{line}\n")
 
 
 if __name__ == '__main__':
