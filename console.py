@@ -53,9 +53,9 @@ class HBNBCommand(cmd.Cmd):
         "update": UpdateCommand(storage)
     }
 
-    def __init__(self):
-        super().__init__()
-        # self.load_history()
+    # def __init__(self):
+    #     super().__init__()
+    #     self.load_history()
 
     def do_create(self, line):
         """
