@@ -15,7 +15,7 @@ from console_commands import AllCommand
 from console_commands import DestroyCommand
 from console_commands import UpdateCommand
 from models import storage
-import readline
+# import readline
 
 
 class HBNBCommand(cmd.Cmd):
@@ -107,7 +107,7 @@ class HBNBCommand(cmd.Cmd):
             bool: True to exit the interface.
 
         """
-        self.save_history()
+        # self.save_history()
         return True
 
     def do_EOF(self, line):
@@ -121,7 +121,7 @@ class HBNBCommand(cmd.Cmd):
             bool: True to exit the interface.
 
         """
-        self.save_history()
+        # self.save_history()
         return True
 
     # def do_clear(self, line):
