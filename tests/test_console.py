@@ -177,6 +177,17 @@ class TestConsole(unittest.TestCase):
             self.assertIn('julia', output.getvalue())
             self.assertIn('age', output.getvalue())
 
+    def test_BaseModel_instance_update_with_dict(self):
+        with patch('sys.stdout', new=StringIO()) as output:
+            self.cmd.onecmd('create BaseModel')
+            _id = output.getvalue().strip('\n')
+            dict_att = "{ 'name' : 'julia', 'age' : 25}"
+            self.cmd.onecmd(f'BaseModel.update("{_id}", {dict_att})')
+            self.cmd.onecmd(f'show BaseModel {_id}')
+            self.assertIn('name', output.getvalue())
+            self.assertIn('julia', output.getvalue())
+            self.assertIn('age', output.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()
