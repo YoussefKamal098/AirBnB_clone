@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-"""Module test_amenity
-
-This Module contains a tests for Amenity Class
+"""
+This Module contains tests for the Console
 """
 
 import os
