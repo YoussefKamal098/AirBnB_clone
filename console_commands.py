@@ -329,7 +329,29 @@ class AllCommand(AirBnBCommand):
         print(self._storage.find_all(model_name=model_class.__name__))
 
 
-class UpdateCommand(AirBnBCommand):
+class AbstractUpdateCommand(AirBnBCommand, ABC):
+    @abstractmethod
+    def check_tokens(self, tokens):
+        """
+        Checks if the provided command line arguments meet the expected format.
+        (Override Method)
+
+        This method validates the number of tokens and the type
+        of the third token (assuming a specific format for certain commands).
+        It returns True if the tokens adhere to the expected format,
+        False otherwise.
+
+         Parameters:
+            tokens (dict[str, any]): A list of tokens parsed from the
+            command line input.
+
+        Returns:
+            bool: True if the tokens meet the expected format, False otherwise.
+        """
+        pass
+
+
+class UpdateCommand(AbstractUpdateCommand):
     """
     UpdateCommand is a concrete subclass of AirBnBCommand for
     updating attributes of an object.
@@ -415,7 +437,7 @@ class UpdateCommand(AirBnBCommand):
         self.__current_update_command.execute()
 
 
-class UpdateWithNameValuePairCommand(UpdateCommand):
+class UpdateWithNameValuePairCommand(AbstractUpdateCommand):
     """
     UpdateCommand is a concrete subclass of AirBnBCommand for
     updating attributes of an object with one key value pair.
@@ -484,7 +506,7 @@ class UpdateWithNameValuePairCommand(UpdateCommand):
         )
 
 
-class UpdateWithDictCommand(UpdateCommand):
+class UpdateWithDictCommand(AbstractUpdateCommand):
     """
     UpdateCommand is a concrete subclass of AirBnBCommand for
     updating attributes of an object with dictionary.
