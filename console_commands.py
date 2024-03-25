@@ -330,23 +330,32 @@ class AllCommand(AirBnBCommand):
 
 
 class AbstractUpdateCommand(AirBnBCommand, ABC):
+    """Abstract base class for update commands in the AirBnB application.
+
+    This abstract class defines the interface for update commands,
+    enforcing a common structure and behavior for updating
+    entities within the AirBnB system.
+
+    Subclasses must implement the `check_tokens`
+    method to validate the user input provided for update operations.
+    """
     @abstractmethod
     def check_tokens(self, tokens):
-        """
-        Checks if the provided command line arguments meet the expected format.
-        (Override Method)
+        """Checks user input for an update command.
 
-        This method validates the number of tokens and the type
-        of the third token (assuming a specific format for certain commands).
-        It returns True if the tokens adhere to the expected format,
-        False otherwise.
+        This abstract method enforces validation of tokens
+        (user input) required for specific update operations within
+        the AirBnB system. Each subclass implementing `AbstractUpdateCommand`
+        must define the logic for checking the validity and completeness of
+        tokens relevant to the specific update operation it represents.
 
-         Parameters:
-            tokens (dict[str, any]): A list of tokens parsed from the
-            command line input.
+        Parameter:
+            tokens (dict): A dictionary containing user input for the update.
+            The specific keys and their expected values will vary depending on
+            the update operation.
 
         Returns:
-            bool: True if the tokens meet the expected format, False otherwise.
+            bool: True if the tokens are valid and complete, False otherwise.
         """
         pass
 

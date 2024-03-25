@@ -5,9 +5,10 @@ a command-line interface for an AirBnB-like application.
 """
 
 import cmd
+import readline
+import re
 import shlex
 import ast
-import re
 import subprocess
 from console_commands import CreateCommand
 from console_commands import ShowCommand
@@ -16,7 +17,6 @@ from console_commands import DestroyCommand
 from console_commands import UpdateCommand
 from console_commands import CountCommand
 from models import storage
-import readline
 
 
 class HBNBCommand(cmd.Cmd):
