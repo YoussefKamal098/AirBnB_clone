@@ -2,6 +2,7 @@
 """FileStorage module - Handles file storage operations for objects"""
 
 import json
+import os
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -60,6 +61,10 @@ class FileStorage:
 
     def reload(self):
         """Deserializes JSON from file and reloads objects"""
+
+        if not os.path.isfile(self.__file_path):
+            return
+
         try:
             with open(self.__file_path, "r") as file:
                 deserialized_objects = json.load(file)
@@ -69,7 +74,7 @@ class FileStorage:
                     for key, dictionary in deserialized_objects.items()
                 }
 
-        except (FileNotFoundError, json.JSONDecodeError):
+        except (OSError, json.JSONDecodeError):
             pass
 
     def find_obj(self, model_name, _id):
