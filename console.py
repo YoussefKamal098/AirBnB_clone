@@ -43,6 +43,9 @@ class HBNBCommand(cmd.Cmd):
     def preloop(self):
         self.load_history()
 
+    def postloop(self):
+        self.save_history()
+
     def do_create(self, line):
         """
         Create a new class instance and print its id.
@@ -86,14 +89,12 @@ class HBNBCommand(cmd.Cmd):
         """
         Quits the command-line interface.
         """
-        self.save_history()
         return True
 
     def do_EOF(self, line):
         """
         Quits the command-line interface.
         """
-        self.save_history()
         return True
 
     def do_clear(self, line):
@@ -151,7 +152,7 @@ class HBNBCommand(cmd.Cmd):
             (class_name, function_name, function_args) if successful,
             None otherwise.
         """
-        pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\((.*)\)$', line)
+        pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\s*\((.*)\)$', line)
         if not pattern:
             return None
 
@@ -175,7 +176,7 @@ class HBNBCommand(cmd.Cmd):
         """
         pass
 
-    def precmd(self, line):
+    def _precmd(self, line):
         """
         Processes the command before execution.
         Parameters:
@@ -214,7 +215,7 @@ class HBNBCommand(cmd.Cmd):
             print(err)
             return []
 
-    def postcmd(self, stop, line):
+    def _postcmd(self, stop, line):
         """
         Processes the command after execution.
 
@@ -256,9 +257,9 @@ class HBNBCommand(cmd.Cmd):
             bool: True if the command indicates termination
             (e.g., "quit"), False otherwise.
         """
-        line = self.precmd(line)
+        line = self._precmd(line)
         stop = super().onecmd(line)
-        self.postcmd(stop, line)
+        self._postcmd(stop, line)
 
         return stop
 

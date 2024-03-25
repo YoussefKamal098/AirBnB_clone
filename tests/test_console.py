@@ -165,7 +165,6 @@ class TestConsole(unittest.TestCase):
             self.cmd.onecmd(f'Review.update("{_id}", "age", "22")')
             self.cmd.onecmd(f'show Review {_id}')
             self.assertIn('age', output.getvalue())
-            self.assertIn('age', output.getvalue())
 
     def test_class_name_update_updates_instance_with_dict(self):
         with patch('sys.stdout', new=StringIO()) as output:
@@ -176,7 +175,6 @@ class TestConsole(unittest.TestCase):
             self.cmd.onecmd(f'show Amenity {_id}')
             self.assertIn('name', output.getvalue())
             self.assertIn('julia', output.getvalue())
-            self.assertIn('age', output.getvalue())
             self.assertIn('age', output.getvalue())
 
 
