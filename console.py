@@ -9,7 +9,6 @@ import shlex
 import ast
 import re
 import subprocess
-from console_commands import AirBnBCommand
 from console_commands import CreateCommand
 from console_commands import ShowCommand
 from console_commands import AllCommand
@@ -26,13 +25,13 @@ class HBNBCommand(cmd.Cmd):
     the AirBnB-like application.
    """
 
-    prompt: str = "(hbnb) "
-    __history_file: str = ".airbnb_cmd_history.txt"
-    __history: list[str] = []
-    __MAX_HIS: int = 100
-    __current_cmd: str = ""
+    prompt = "(hbnb) "
+    __history_file = ".airbnb_cmd_history.txt"
+    __history = []
+    __MAX_HIS = 100
+    __current_cmd = ""
 
-    __airbnb_commands: dict[str, AirBnBCommand] = {
+    __airbnb_commands = {
         "create": CreateCommand(storage),
         "show": ShowCommand(storage),
         "destroy": DestroyCommand(storage),
@@ -41,31 +40,31 @@ class HBNBCommand(cmd.Cmd):
         "count": CountCommand(storage)
     }
 
-    def preloop(self) -> None:
+    def preloop(self):
         self.load_history()
 
-    def do_create(self, line: str) -> None:
+    def do_create(self, line):
         """
         Create a new class instance and print its id.
         Usage: create <class>
         """
         self.__airbnb_commands["create"].execute()
 
-    def do_show(self, line: str) -> None:
+    def do_show(self, line):
         """
         Display the string representation of a class instance of a given id.
         Usage: show <class> <id>
         """
         self.__airbnb_commands["show"].execute()
 
-    def do_destroy(self, line: str) -> None:
+    def do_destroy(self, line):
         """
         Delete a class instance of a given id.
         Usage: destroy <class> <id>
         """
         self.__airbnb_commands["destroy"].execute()
 
-    def do_all(self, line: str) -> None:
+    def do_all(self, line):
         """
         Display string representations of all instances of a given class.
         If no class is specified, displays all instantiated objects.
@@ -74,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
         """
         self.__airbnb_commands["all"].execute()
 
-    def do_update(self, line: str) -> None:
+    def do_update(self, line):
         """
         Update a class instance of a given id by adding or updating
         a given attribute key/value pair or dictionary.
@@ -83,7 +82,7 @@ class HBNBCommand(cmd.Cmd):
         """
         self.__airbnb_commands["update"].execute()
 
-    def do_quit(self, line: str) -> bool:
+    def do_quit(self, line):
         """
         Quits the command-line interface.
 
@@ -97,7 +96,7 @@ class HBNBCommand(cmd.Cmd):
         self.save_history()
         return True
 
-    def do_EOF(self, line: str) -> bool:
+    def do_EOF(self, line):
         """
         Handles the end-of-file signal.
 
@@ -111,7 +110,7 @@ class HBNBCommand(cmd.Cmd):
         self.save_history()
         return True
 
-    def do_clear(self, line: str) -> None:
+    def do_clear(self, line):
         """
         Clears the Screen
         """
@@ -124,7 +123,7 @@ class HBNBCommand(cmd.Cmd):
         print(result.stderr.decode(), end="")
         print(result.stdout.decode(), end="")
 
-    def default(self, line: str) -> None:
+    def default(self, line):
         """
         Handles unmatched commands by delegating execution to
         the parent class's default method. If parsing fails,
@@ -154,7 +153,7 @@ class HBNBCommand(cmd.Cmd):
         self.__airbnb_commands[function_name].set_tokens(tokens)
         self.__airbnb_commands[function_name].execute()
 
-    def extract_method_call(self, line: str) -> tuple[any, any, any] | None:
+    def extract_method_call(self, line):
         """
         Extracts method call information (class name, function name, arguments)
         from a line using regular expressions. Handles potential errors during
@@ -185,13 +184,13 @@ class HBNBCommand(cmd.Cmd):
 
         return class_name, function_name, function_args
 
-    def emptyline(self: str) -> None:
+    def emptyline(self):
         """
         Handles empty input.
         """
         pass
 
-    def precmd(self, line: str) -> str:
+    def precmd(self, line):
         """
         Processes the command before execution.
         Parameters:
@@ -215,7 +214,7 @@ class HBNBCommand(cmd.Cmd):
         return line.strip()
 
     @staticmethod
-    def parse_line(line: str) -> list[str] | str:
+    def parse_line(line):
         """
         Splits a command line input string into a list of tokens using shlex.
         Parameters:
@@ -231,7 +230,7 @@ class HBNBCommand(cmd.Cmd):
             print(err)
             return ""
 
-    def postcmd(self, stop, line: str) -> bool:
+    def postcmd(self, stop, line):
         """
         Processes the command after execution.
 
@@ -248,7 +247,7 @@ class HBNBCommand(cmd.Cmd):
         self.__current_cmd = ""
         return stop
 
-    def add_history(self, line: str) -> None:
+    def add_history(self, line):
         """
         Adds a command line input to the command history,
         maintaining a maximum size.
@@ -261,7 +260,7 @@ class HBNBCommand(cmd.Cmd):
         if history_length > self.__MAX_HIS:
             self.__history.pop(0)
 
-    def load_history(self) -> None:
+    def load_history(self):
         """Loads the command history from the file (if it exists)."""
         try:
             with open(self.__history_file, "r") as file:
@@ -278,7 +277,7 @@ class HBNBCommand(cmd.Cmd):
         except FileNotFoundError:
             pass
 
-    def save_history(self) -> None:
+    def save_history(self):
         """Saves the current command history to the file."""
         with open(self.__history_file, "w") as file:
             for line in self.__history:

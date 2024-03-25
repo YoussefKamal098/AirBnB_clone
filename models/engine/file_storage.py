@@ -14,9 +14,9 @@ from models.review import Review
 class FileStorage:
     """FileStorage class - Handles file storage operations for objects"""
 
-    __file_path: str = "file.json"
-    __objects: dict[str, BaseModel] = {}
-    __MODELS: dict[str, BaseModel] = {
+    __file_path = "file.json"
+    __objects = {}
+    __MODELS = {
         "BaseModel": BaseModel,
         "User": User,
         "State": State,
@@ -26,11 +26,11 @@ class FileStorage:
         "Review": Review
     }
 
-    def all(self) -> dict[str, BaseModel]:
+    def all(self):
         """Returns the dictionary __objects"""
         return self.__objects
 
-    def new(self, obj: BaseModel) -> None:
+    def new(self, obj):
         """
         Adds a new object to __objects
         Parameters:
@@ -44,7 +44,7 @@ class FileStorage:
 
         self.__objects[key] = obj
 
-    def save(self) -> None:
+    def save(self):
         """Serializes objects to JSON and saves to file"""
         serialized_objects = {
             key: obj.to_dict()
@@ -54,7 +54,7 @@ class FileStorage:
         with open(self.__file_path, "w") as file:
             json.dump(serialized_objects, file)
 
-    def reload(self) -> None:
+    def reload(self):
         """Deserializes JSON from file and reloads objects"""
         try:
             with open(self.__file_path, "r") as file:
@@ -68,7 +68,7 @@ class FileStorage:
         except (FileNotFoundError, json.JSONDecodeError):
             pass
 
-    def find_obj(self, model_name: str, _id: str) -> BaseModel | None:
+    def find_obj(self, model_name, _id):
         """
         Finds and returns an object by model name and ID
         Parameters:
@@ -87,7 +87,7 @@ class FileStorage:
 
         return self.__objects.get(key)
 
-    def remove_obj(self, model_name: str, _id: str) -> None:
+    def remove_obj(self, model_name, _id):
         """
         Removes an object from storage by model name and ID
         Parameters:
@@ -103,7 +103,7 @@ class FileStorage:
         del self.__objects[key]
         self.save()
 
-    def find_all(self, model_name="") -> list[str]:
+    def find_all(self, model_name=""):
         """
         Finds and returns all objects of a given model
         Parameters:
@@ -120,8 +120,7 @@ class FileStorage:
         return [str(obj) for key, obj in self.__objects.items()
                 if obj.__class__.__name__ == model_name]
 
-    def update_obj_attribute(self, model_name: str,
-                             _id: str, **kwargs) -> None:
+    def update_obj_attribute(self, model_name, _id, **kwargs):
         """
         Updates an attribute of an object by
         model name, ID, and attribute name/value pair
@@ -143,8 +142,7 @@ class FileStorage:
         FileStorage._update_obj_attribute(obj, attribute_name, attribute_value)
         self.save()
 
-    def update_obj_attributes(self, model_name: str,
-                              _id: str, **kwargs) -> None:
+    def update_obj_attributes(self, model_name, _id, **kwargs):
         """Updates attributes of an object identified by model name and ID.
 
         This function takes a model name (string), an object ID (str), and
@@ -167,8 +165,7 @@ class FileStorage:
                 model_name, _id, attribute_name=key, attribute_value=value)
 
     @staticmethod
-    def _update_obj_attribute(obj: BaseModel,
-                              attribute_name: str, value: any) -> None:
+    def _update_obj_attribute(obj: BaseModel, attribute_name, value):
         """
         Updates an attribute of an object
         Parameters:
@@ -196,7 +193,7 @@ class FileStorage:
 
         setattr(obj, attribute_name, attribute_type(value))
 
-    def count(self, model_name: str) -> int | None:
+    def count(self, model_name):
         """
         Finds and returns all objects of a given model
         Parameters:
@@ -213,7 +210,7 @@ class FileStorage:
         return sum(1 for key in self.__objects.keys()
                    if key.startswith(model_name))
 
-    def _deserialize(self, dictionary: dict[str, any]) -> BaseModel | None:
+    def _deserialize(self, dictionary):
         """
         Deserializes a dictionary into an object
         Parameters:
@@ -249,15 +246,15 @@ class FileStorage:
 
         return f"{model_name}.{_id}"
 
-    def get_models_classes(self) -> tuple[BaseModel]:
+    def get_models_classes(self):
         """Returns a tuple of model classes"""
         return tuple(self.__MODELS.values())
 
-    def get_models_names(self) -> tuple[str]:
+    def get_models_names(self):
         """Returns a tuple of model names"""
         return tuple(self.__MODELS.keys())
 
-    def get_model_class(self, model_name: str) -> BaseModel | None:
+    def get_model_class(self, model_name):
         """
         Returns the class corresponding to a model name
         Parameters:
