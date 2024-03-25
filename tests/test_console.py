@@ -11,7 +11,7 @@ from console import HBNBCommand
 
 
 class TestConsole(unittest.TestCase):
-    """Tests the console application"""
+    """Tests the Console application"""
     @classmethod
     def setUpClass(cls):
         """sets up the test console"""
