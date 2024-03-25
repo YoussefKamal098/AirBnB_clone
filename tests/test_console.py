@@ -38,104 +38,125 @@ class TestConsole(unittest.TestCase):
         except OSError:
             pass
 
-    def test_create_prints_class_name_error(self):
+    def test_create_displays_class_name_error(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('create')
             self.assertEqual("** class name missing **\n", output.getvalue())
 
-    def test_create_prints_class_does_not_exist_error(self):
+    def test_create_displays_class_does_not_exist_error(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('create BModel')
             self.assertEqual("** class doesn't exist **\n", output.getvalue())
 
     def test_create_creates_an_instance(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            _id = output.getvalue()
-            self.assertNotIn(_id, [None, ""])
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue()
+                    self.assertNotIn(_id, [None, ""])
 
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd(f'show BaseModel {_id}')
-            self.assertIn(_id.strip('\n'), output.getvalue())
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'show {model} {_id}')
+                    self.assertIn(_id.strip('\n'), output.getvalue())
 
-    def test_show_prints_class_name_error(self):
+    def test_show_displays_class_name_error(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('show')
             self.assertEqual("** class name missing **\n", output.getvalue())
 
-    def test_show_prints_class_does_not_exist_error(self):
+    def test_show_displays_class_does_not_exist_error(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('show BModel')
             self.assertEqual("** class doesn't exist **\n", output.getvalue())
 
-    def test_show_prints_an_instance(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'show BaseModel {_id}')
-            self.assertIn("BaseModel", output.getvalue())
+    def test_show_displays_an_instance(self):
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    self.cmd.onecmd(f'show {model} {_id}')
+                    self.assertIn(model, output.getvalue())
 
-    def test_destroy_prints_class_name_error(self):
+    def test_destroy_displays_class_name_error(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('destroy')
             self.assertEqual("** class name missing **\n", output.getvalue())
 
-    def test_destroy_prints_class_does_not_exist(self):
+    def test_destroy_displays_class_does_not_exist(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('destroy BModel')
             self.assertEqual("** class doesn't exist **\n", output.getvalue())
 
-    def test_destroy_prints_instance_not_found(self):
+    def test_destroy_displays_instance_not_found(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('destroy BaseModel "id that doesn\'t exists"')
             self.assertIn("** no instance found **", output.getvalue())
 
     def test_destroy_deletes_an_instance(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'destroy BaseModel {_id}')
-            self.cmd.onecmd(f'show BaseModel {_id}')
-            self.assertIn("** no instance found **", output.getvalue())
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    self.cmd.onecmd(f'destroy {model} {_id}')
+                    self.cmd.onecmd(f'show {model} {_id}')
+                    self.assertIn("** no instance found **", output.getvalue())
 
-    def test_all_displays_instance_instance(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            self.cmd.onecmd('create BaseModel')
-            self.cmd.onecmd(f'all')
-            self.assertIn("BaseModel", output.getvalue())
-            self.assertGreaterEqual(output.getvalue().count("BaseModel"), 2)
+    def test_all_displays_all_instance(self):
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    self.cmd.onecmd(f'create {model}')
+                    self.cmd.onecmd(f'all {model}')
+                    self.assertIn(model, output.getvalue())
+                    self.assertGreaterEqual(output.getvalue().count(model), 2)
 
-    def test_all_prints_class_instances(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            self.cmd.onecmd('create User')
-            self.cmd.onecmd('all User')
-            self.assertIn("User", output.getvalue())
-            self.assertNotIn("BaseModel", output.getvalue())
+    def test_all_displays_specific_class_instances(self):
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    self.cmd.onecmd('create BaseModel')
+                    self.cmd.onecmd(f'all {model}')
+                    self.assertIn(model, output.getvalue())
+
+                for other_model in self.models:
+                    if other_model == model:
+                        continue
+                    self.assertNotIn(other_model, output.getvalue())
 
     def test_update_attribute_name_missing_error(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'update BaseModel {_id}')
-            self.assertIn("** attribute name missing **", output.getvalue())
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    self.cmd.onecmd(f'update {model} {_id}')
+                    self.assertIn(
+                        "** attribute name missing **", output.getvalue())
 
     def test_update_attribute_value_missing_error(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'update BaseModel {_id} first_name')
-            self.assertIn("** value missing **", output.getvalue())
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    self.cmd.onecmd(f'update {model} {_id} first_name')
+                    self.assertIn("** value missing **", output.getvalue())
 
     def test_update_updates_instance(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create State')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'update State {_id} name example_state')
-            self.cmd.onecmd(f'show State {_id}')
-            self.assertIn('name', output.getvalue())
-            self.assertIn('example_state', output.getvalue())
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    self.cmd.onecmd(f'update {model} {_id} attr value')
+                    self.cmd.onecmd(f'show {model} {_id}')
+                    self.assertIn('attr', output.getvalue())
+                    self.assertIn('value', output.getvalue())
 
     def test_class_name_all_displays_instances(self):
         for model in self.models:
