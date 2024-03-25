@@ -16,6 +16,8 @@ class TestConsole(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """sets up the test console"""
+        cls.models = ['BaseModel', 'User', 'Place',
+                      'City', 'Amenity', 'State', 'Review']
         try:
             os.rename("file.json", "tmp")
         except OSError:
@@ -135,19 +137,18 @@ class TestConsole(unittest.TestCase):
             self.assertIn('name', output.getvalue())
             self.assertIn('example_state', output.getvalue())
 
-    def test_class_name_all_prints_instances(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            self.cmd.onecmd('create BaseModel')
-            self.cmd.onecmd('BaseModel.all()')
-            self.assertIn("BaseModel", output.getvalue())
-            self.assertGreaterEqual(output.getvalue().count("BaseModel"), 2)
+    def test_class_name_all_displays_instances(self):
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    self.cmd.onecmd(f'create {model}')
+                    self.cmd.onecmd(f'{model}.all()')
+                    self.assertIn(model, output.getvalue())
+                    self.assertGreaterEqual(output.getvalue().count(model), 2)
 
-    def test_instances_count(self):
-        models = ['BaseModel', 'User', 'Place',
-                  'City', 'Amenity', 'State', 'Review']
-
-        for model in models:
+    def test_class_name_instances_count(self):
+        for model in self.models:
             with self.subTest(model=model):
                 with patch('sys.stdout', new=StringIO()):
                     for _ in range(10):
@@ -157,11 +158,8 @@ class TestConsole(unittest.TestCase):
                     self.cmd.onecmd(f'{model}.count()')
                     self.assertLessEqual(10, int(output.getvalue()))
 
-    def test_instance_show(self):
-        models = ['BaseModel', 'User', 'Place',
-                  'City', 'Amenity', 'State', 'Review']
-
-        for model in models:
+    def test_class_name_instance_show(self):
+        for model in self.models:
             with self.subTest(model=model):
                 with patch('sys.stdout', new=StringIO()) as output:
                     self.cmd.onecmd(f'create {model}')
@@ -169,11 +167,8 @@ class TestConsole(unittest.TestCase):
                     self.cmd.onecmd(f'{model}.show("{_id}")')
                     self.assertIn(model, output.getvalue())
 
-    def test_instance_destroy(self):
-        models = ['BaseModel', 'User', 'Place',
-                  'City', 'Amenity', 'State', 'Review']
-
-        for model in models:
+    def test_class_name_instance_destroy(self):
+        for model in self.models:
             with self.subTest(model=model):
                 with patch('sys.stdout', new=StringIO()) as output:
                     self.cmd.onecmd(f'create {model}')
@@ -182,11 +177,8 @@ class TestConsole(unittest.TestCase):
                     self.cmd.onecmd(f'show {model} {_id}')
                     self.assertIn('** no instance found **', output.getvalue())
 
-    def test_instance_update_with_key_value_pair(self):
-        models = ['BaseModel', 'User', 'Place',
-                  'City', 'Amenity', 'State', 'Review']
-
-        for model in models:
+    def test_class_name_instance_update_with_key_value_pair(self):
+        for model in self.models:
             with self.subTest(model=model):
                 with patch('sys.stdout', new=StringIO()) as output:
                     self.cmd.onecmd(f'create {model}')
@@ -198,11 +190,8 @@ class TestConsole(unittest.TestCase):
                     self.assertIn('name', output.getvalue())
                     self.assertIn('Julia', output.getvalue())
 
-    def test_instance_update_with_dict(self):
-        models = ['BaseModel', 'User', 'Place',
-                  'City', 'Amenity', 'State', 'Review']
-
-        for model in models:
+    def test_class_name_instance_update_with_dict(self):
+        for model in self.models:
             with self.subTest(model=model):
                 with patch('sys.stdout', new=StringIO()) as output:
                     self.cmd.onecmd(f'create {model}')
