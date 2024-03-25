@@ -10,6 +10,7 @@ from io import StringIO
 from unittest.mock import patch
 from console import HBNBCommand
 
+
 class TestConsole(unittest.TestCase):
     """Tests the console application"""
     @classmethod
@@ -157,39 +158,37 @@ class TestConsole(unittest.TestCase):
             self.cmd.onecmd(f'show BaseModel {_id}')
             self.assertIn("** no instance found **", output.getvalue())
 
-    def test_class_name_update_updates_instance(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create Review')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'Review.update("{_id}", "age", "22")')
-            self.cmd.onecmd(f'show Review {_id}')
-            self.assertIn('age', output.getvalue())
+    def test_instance_update_with_key_value_pair(self):
+        models = ['BaseModel', 'User', 'Place',
+                  'City', 'Amenity', 'State', 'Review']
 
-    def test_class_name_update_updates_instance_with_dict(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create Amenity')
-            _id = output.getvalue().strip('\n')
-            dict_att = "{ 'name' : 'julia', 'age' : 25 }"
-            self.cmd.onecmd(f'Amenity.update("{_id}", {dict_att})')
-            self.cmd.onecmd(f'show Amenity {_id}')
-            self.assertIn('name', output.getvalue())
-            self.assertIn('julia', output.getvalue())
-            self.assertIn('age', output.getvalue())
+        for model in models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    key, value = "name", "Julia"
+                    self.cmd.onecmd(
+                        f'{model}.update("{_id}", "{key}", "{value}")')
+                    self.cmd.onecmd(f'show {model} {_id}')
+                    self.assertIn('name', output.getvalue())
+                    self.assertIn('Julia', output.getvalue())
 
     def test_instance_update_with_dict(self):
         models = ['BaseModel', 'User', 'Place',
                   'City', 'Amenity', 'State', 'Review']
 
         for model in models:
-            with self.subTest(model = model):
+            with self.subTest(model=model):
                 with patch('sys.stdout', new=StringIO()) as output:
                     self.cmd.onecmd(f'create {model}')
                     _id = output.getvalue().strip('\n')
-                    dict_attr = "{ 'name' : 'julia', 'age' : 25}"
+                    dict_attr = "{ 'name' : 'Julia', 'age' : 25}"
                     self.cmd.onecmd(f'{model}.update("{_id}", {dict_attr})')
                     self.cmd.onecmd(f'show {model} {_id}')
                     self.assertIn('name', output.getvalue())
-                    self.assertIn('julia', output.getvalue())
+                    self.assertIn('25', output.getvalue())
+                    self.assertIn('Julia', output.getvalue())
                     self.assertIn('age', output.getvalue())
 
 
