@@ -16,6 +16,11 @@ class TestConsole(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """sets up the test console"""
+        try:
+            os.rename("file.json", "tmp")
+        except OSError:
+            pass
+
         cls.cmd = HBNBCommand()
 
     @classmethod
@@ -23,6 +28,11 @@ class TestConsole(unittest.TestCase):
         """removes the file.json temporary file"""
         try:
             os.remove("file.json")
+        except OSError:
+            pass
+
+        try:
+            os.rename("tmp", "file.json")
         except OSError:
             pass
 
@@ -133,30 +143,44 @@ class TestConsole(unittest.TestCase):
             self.assertIn("BaseModel", output.getvalue())
             self.assertGreaterEqual(output.getvalue().count("BaseModel"), 2)
 
-    def test_class_name_count_prints_instances(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create Place')
-            self.cmd.onecmd('create Place')
-            self.cmd.onecmd('create Place')
-            self.cmd.onecmd('create Place')
-            self.cmd.onecmd('create Place')
-            self.cmd.onecmd('Place.count()')
-            self.assertIn('5', output.getvalue())
+    def test_instances_count(self):
+        models = ['BaseModel', 'User', 'Place',
+                  'City', 'Amenity', 'State', 'Review']
 
-    def test_class_name_show_prints_an_instance(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'BaseModel.show("{_id}")')
-            self.assertIn("BaseModel", output.getvalue())
+        for model in models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()):
+                    for _ in range(10):
+                        self.cmd.onecmd(f'create {model}')
 
-    def test_class_name_destroy_deletes_an_object(self):
-        with patch('sys.stdout', new=StringIO()) as output:
-            self.cmd.onecmd('create BaseModel')
-            _id = output.getvalue().strip('\n')
-            self.cmd.onecmd(f'BaseModel.destroy("{_id}")')
-            self.cmd.onecmd(f'show BaseModel {_id}')
-            self.assertIn("** no instance found **", output.getvalue())
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'{model}.count()')
+                    self.assertLessEqual(10, int(output.getvalue()))
+
+    def test_instance_show(self):
+        models = ['BaseModel', 'User', 'Place',
+                  'City', 'Amenity', 'State', 'Review']
+
+        for model in models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    self.cmd.onecmd(f'{model}.show("{_id}")')
+                    self.assertIn(model, output.getvalue())
+
+    def test_instance_destroy(self):
+        models = ['BaseModel', 'User', 'Place',
+                  'City', 'Amenity', 'State', 'Review']
+
+        for model in models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'create {model}')
+                    _id = output.getvalue().strip('\n')
+                    self.cmd.onecmd(f'{model}.destroy("{_id}")')
+                    self.cmd.onecmd(f'show {model} {_id}')
+                    self.assertIn('** no instance found **', output.getvalue())
 
     def test_instance_update_with_key_value_pair(self):
         models = ['BaseModel', 'User', 'Place',
