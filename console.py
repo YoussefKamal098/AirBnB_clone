@@ -152,11 +152,12 @@ class HBNBCommand(cmd.Cmd):
             (class_name, function_name, function_args) if successful,
             None otherwise.
         """
-        pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\s*\((.*)\)$', line)
-        if not pattern:
+        pattern = r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\s*\((.*)\)$'
+        math = re.match(pattern, line)
+        if not math:
             return None
 
-        class_name, function_name, function_args_literal = pattern.groups()
+        class_name, function_name, function_args_literal = math.groups()
         if function_name not in self.__airbnb_commands:
             return None
 
