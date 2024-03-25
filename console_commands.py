@@ -4,8 +4,6 @@ This module defines a set of commands used in an AirBnB application.
 """
 
 from abc import ABC, abstractmethod
-from models.base_model import BaseModel
-
 
 class AirBnBCommand(ABC):
     """
@@ -113,7 +111,7 @@ class AirBnBCommand(ABC):
         return {"attribute_name": attribute_name,
                 "attribute_value": attribute_value}
 
-    def get_model_class(self, tokens: dict[str, any]) -> BaseModel | None:
+    def get_model_class(self, tokens: dict[str, any]):
         """
         Retrieves the model class based on the model name.
 
@@ -130,8 +128,7 @@ class AirBnBCommand(ABC):
 
         return model_class
 
-    def get_model_instance(self, tokens: dict[str, any]) \
-            -> tuple[BaseModel, BaseModel] | None:
+    def get_model_instance(self, tokens: dict[str, any]):
         """
         Retrieves the model instance based on the model class and instance ID.
 
