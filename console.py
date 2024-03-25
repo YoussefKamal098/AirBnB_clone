@@ -146,8 +146,9 @@ class HBNBCommand(cmd.Cmd):
             line (str): The command line input.
 
         Returns:
-            tuple or None: A tuple containing (class_name, function_name, function_args)
-            if successful, None otherwise.
+            tuple or None: A tuple containing
+            (class_name, function_name, function_args) if successful,
+            None otherwise.
         """
         pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\((.*)\)$', line)
         if not pattern:

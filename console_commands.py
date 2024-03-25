@@ -53,7 +53,8 @@ class AirBnBCommand(ABC):
         from the command line for later usage during execution.
 
         Parameters:
-            tokens (list[str]): A list of tokens parsed from the command line input.
+            tokens (list[str]): A list of tokens parsed from the command
+            line input.
         """
         pass
 
