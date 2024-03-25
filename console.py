@@ -85,27 +85,13 @@ class HBNBCommand(cmd.Cmd):
     def do_quit(self, line):
         """
         Quits the command-line interface.
-
-        Parameters:
-            line (str): The command line input.
-
-        Returns:
-            bool: True to exit the interface.
-
         """
         self.save_history()
         return True
 
     def do_EOF(self, line):
         """
-        Handles the end-of-file signal.
-
-        Parameters:
-            line (str): The command line input.
-
-        Returns:
-            bool: True to exit the interface.
-
+        Quits the command-line interface.
         """
         self.save_history()
         return True
@@ -131,9 +117,6 @@ class HBNBCommand(cmd.Cmd):
 
         Parameters:
             line (str): The command line input.
-
-        Returns:
-            None
         """
         extracted_data = self.extract_method_call(line)
 
@@ -163,7 +146,7 @@ class HBNBCommand(cmd.Cmd):
             line (str): The command line input.
 
         Returns:
-            tuple or None: A tuple containing (class_name, function_name, args)
+            tuple or None: A tuple containing (class_name, function_name, function_args)
             if successful, None otherwise.
         """
         pattern = re.match(r'^([A-Z]\w*)?\s*\.\s*([A-Za-z]\w*)\((.*)\)$', line)
@@ -197,7 +180,6 @@ class HBNBCommand(cmd.Cmd):
             line (str): The command line input.
         Returns:
             str: The processed command line input.
-
         """
         self.add_history(line)
 
@@ -228,7 +210,7 @@ class HBNBCommand(cmd.Cmd):
             return tokens
         except ValueError as err:
             print(err)
-            return ""
+            return []
 
     def postcmd(self, stop, line):
         """

@@ -27,14 +27,18 @@ class FileStorage:
     }
 
     def all(self):
-        """Returns the dictionary __objects"""
+        """Returns the dictionary of stored objects.
+
+        Returns:
+            dict: The dictionary containing all stored objects.
+        """
         return self.__objects
 
     def new(self, obj):
-        """
-        Adds a new object to __objects
-        Parameters:
-            obj: the object to add
+        """Adds a new object to the storage.
+
+        Parameter:
+            obj (BaseModel): The object to add.
         """
         if not obj or type(obj) not in self.get_models_classes():
             return
@@ -72,8 +76,8 @@ class FileStorage:
         """
         Finds and returns an object by model name and ID
         Parameters:
-            model_name: the name of the model
-            _id: the ID of the object
+            model_name (str): the name of the model
+            _id (str): the ID of the object
         Returns:
             The object if found, otherwise None
         """
@@ -91,8 +95,8 @@ class FileStorage:
         """
         Removes an object from storage by model name and ID
         Parameters:
-            model_name: the name of the model
-            _id: the ID of the object
+            model_name (str): the name of the model
+            _id (str): the ID of the object
         """
         obj = self.find_obj(model_name, _id)
         if not obj:
@@ -107,7 +111,7 @@ class FileStorage:
         """
         Finds and returns all objects of a given model
         Parameters:
-            model_name: the name of the model
+            model_name (str): the name of the model
         Returns:
             A list of objects if found, otherwise an empty list
         """
@@ -125,8 +129,8 @@ class FileStorage:
         Updates an attribute of an object by
         model name, ID, and attribute name/value pair
         Parameters:
-            model_name: the name of the model
-            _id: the ID of the object
+            model_name (str): the name of the model
+            _id (str): the ID of the object
             **kwargs: keyword arguments representing attribute name/value pair
         """
         obj = self.find_obj(model_name, _id)
@@ -157,21 +161,19 @@ class FileStorage:
             **kwargs: Keyword arguments where the key represents
             the attribute name and the value represents the new
             attribute value.
-        Returns:
-            None
         """
         for key, value in kwargs.items():
             self.update_obj_attribute(
                 model_name, _id, attribute_name=key, attribute_value=value)
 
     @staticmethod
-    def _update_obj_attribute(obj: BaseModel, attribute_name, value):
+    def _update_obj_attribute(obj, attribute_name, value):
         """
         Updates an attribute of an object
         Parameters:
-            obj: the object to update
-            attribute_name: the name of the attribute
-            value: the new value of the attribute
+            obj (BaseModel): the object to update
+            attribute_name (str): the name of the attribute
+            value (any): the new value of the attribute
         """
         if not obj or not isinstance(attribute_name, str):
             return
@@ -195,11 +197,11 @@ class FileStorage:
 
     def count(self, model_name):
         """
-        Finds and returns all objects of a given model
+        Count and returns number of objects of a given model
         Parameters:
-            model_name: the name of the model
+            model_name (str): the name of the model
         Returns:
-            A list of objects if found, otherwise an empty list
+            number of objects of a given model if found, otherwise None
         """
         if not model_name:
             return None
@@ -214,9 +216,10 @@ class FileStorage:
         """
         Deserializes a dictionary into an object
         Parameters:
-            dictionary: the dictionary to deserialize
+            dictionary (dict[str, any]): the dictionary to deserialize
         Returns:
-            An object if deserialization is successful, otherwise None
+            An object if deserialization is successful of (BaseModel),
+            otherwise None
         """
         if dictionary is None:
             return None
@@ -236,10 +239,10 @@ class FileStorage:
         """
         Generates a unique key for an object based on model name and ID
         Parameters:
-            model_name: the name of the model
-            _id: the ID of the object
+            model_name (str): the name of the model
+            _id (str): the ID of the object
         Returns:
-            The generated key
+            The generated key (str)
         """
         if not model_name or not _id:
             return None
@@ -258,9 +261,9 @@ class FileStorage:
         """
         Returns the class corresponding to a model name
         Parameters:
-            model_name: the name of the model
+            model_name (str): the name of the model
         Returns:
-            The class if found, otherwise None
+            The class if found (BaseModel), otherwise None
         """
         if model_name not in self.get_models_names():
             print("** class doesn't exist **")

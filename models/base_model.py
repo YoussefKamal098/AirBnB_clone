@@ -56,7 +56,7 @@ class BaseModel:
 
     def save(self):
         """
-        Saves the current object state.
+        Saves the current object state to storage.
         """
 
         self.updated_at = datetime.now()
@@ -67,7 +67,7 @@ class BaseModel:
         Returns a dictionary representation of the object.
 
         Returns:
-        - dictionary: Dictionary containing object attributes.
+        - dictionary (dict[str, any]): Dictionary containing object attributes.
         """
 
         dictionary = dict(self.__dict__)

@@ -17,8 +17,8 @@ class AirBnBCommand(ABC):
         Initializes a new instance of the AirBnBCommand class.
 
         Parameters:
-            storage (Storage): A storage object used to interact with
-            the database.
+            storage (FileStorage): A storage object used to interact with
+            the FileStorage.
 
         """
         self._storage = storage
@@ -52,8 +52,8 @@ class AirBnBCommand(ABC):
         Subclasses might use this method to store information extracted
         from the command line for later usage during execution.
 
-        Args:
-            tokens (list): A list of tokens parsed from the command line input.
+        Parameters:
+            tokens (list[str]): A list of tokens parsed from the command line input.
         """
         pass
 
@@ -62,6 +62,9 @@ class AirBnBCommand(ABC):
         """
         Retrieves the model name token.
 
+        Parameters:
+            tokens (dict[str, any]): A dictionary of tokens parsed
+            from the command line input.
         Returns:
             str: The model name token.
         """
@@ -78,9 +81,11 @@ class AirBnBCommand(ABC):
         """
         Retrieves the instance ID token.
 
+        Parameters:
+            tokens (dict[str, any]): A dictionary of tokens parsed
+            from the command line input.
         Returns:
             str: The instance ID token.
-
         """
         _id = tokens.get("instance_id", None)
 
@@ -95,6 +100,9 @@ class AirBnBCommand(ABC):
         """
         Retrieves attribute name-value pair tokens.
 
+        Parameters:
+            tokens (dict[str, any]): A dictionary of tokens parsed
+            from the command line input.
         Returns:
             dict: A dictionary containing attribute name-value pair.
         """
@@ -115,6 +123,9 @@ class AirBnBCommand(ABC):
         """
         Retrieves the model class based on the model name.
 
+         Parameters:
+            tokens (dict[str, any]): A dictionary of tokens parsed
+            from the command line input.
         Returns:
             class: The model class.
         """
@@ -132,6 +143,9 @@ class AirBnBCommand(ABC):
         """
         Retrieves the model instance based on the model class and instance ID.
 
+         Parameters:
+            tokens (dict[str, any]): A dictionary of tokens parsed
+            from the command line input.
         Returns:
             tuple: A tuple containing the model class and model instance.
         """
@@ -165,7 +179,7 @@ class CreateCommand(AirBnBCommand):
         Sets the tokens based on the provided values.
 
         Parameters:
-            tokens (list): A list of token values.
+            tokens (list[str]): A list of token values.
 
         """
         for key, value in zip(self.__tokens, tokens):
@@ -207,7 +221,7 @@ class ShowCommand(AirBnBCommand):
         Sets the tokens based on the provided values.
 
         Parameters:
-            tokens (list): A list of token values.
+            tokens (list[str]): A list of token values.
 
         """
         for key, value in zip(self.__tokens, tokens):
@@ -216,7 +230,6 @@ class ShowCommand(AirBnBCommand):
     def reset_tokens(self):
         """
         Resets the tokens dictionary to default values.
-
         """
         for key in self.__tokens.keys():
             self.__tokens[key] = None
@@ -249,8 +262,7 @@ class DestroyCommand(AirBnBCommand):
         Sets the tokens based on the provided values.
 
         Parameters:
-            tokens (list): A list of token values.
-
+            tokens (list[str]): A list of token values.
         """
         for key, value in zip(self.__tokens, tokens):
             self.__tokens[key] = value
@@ -258,7 +270,6 @@ class DestroyCommand(AirBnBCommand):
     def reset_tokens(self):
         """
         Resets the tokens dictionary to default values.
-
         """
         for key in self.__tokens.keys():
             self.__tokens[key] = None
@@ -287,6 +298,9 @@ class AllCommand(AirBnBCommand):
     def set_tokens(self, tokens):
         """
         Sets the tokens based on the provided values.
+
+        Parameters:
+            tokens (list[str]): A list of token values.
         """
         for key, value in zip(self.__tokens, tokens):
             self.__tokens[key] = value
@@ -294,7 +308,6 @@ class AllCommand(AirBnBCommand):
     def reset_tokens(self):
         """
         Resets the tokens dictionary to default values.
-
         """
         for key in self.__tokens.keys():
             self.__tokens[key] = None
@@ -345,14 +358,15 @@ class UpdateCommand(AirBnBCommand):
     def check_tokens(self, tokens):
         """
         Checks if the provided command line arguments meet the expected format.
+        (Override Method)
 
         This method validates the number of tokens and the type
         of the third token (assuming a specific format for certain commands).
         It returns True if the tokens adhere to the expected format,
         False otherwise.
 
-        Args:
-            tokens (list[any]): A list of tokens parsed from the
+         Parameters:
+            tokens (dict[str, any]): A list of tokens parsed from the
             command line input.
 
         Returns:
@@ -400,7 +414,7 @@ class UpdateCommand(AirBnBCommand):
         self.__current_update_command.execute()
 
 
-class UpdateWithNameValuePairCommand(AirBnBCommand):
+class UpdateWithNameValuePairCommand(UpdateCommand):
     """
     UpdateCommand is a concrete subclass of AirBnBCommand for
     updating attributes of an object with one key value pair.
@@ -422,7 +436,7 @@ class UpdateWithNameValuePairCommand(AirBnBCommand):
         It returns True if the tokens adhere to the expected format,
         False otherwise.
 
-        Args:
+        Parameters:
             tokens (list[any]): A list of tokens parsed from the
             command line input.
 
@@ -469,7 +483,7 @@ class UpdateWithNameValuePairCommand(AirBnBCommand):
         )
 
 
-class UpdateWithDictCommand(AirBnBCommand):
+class UpdateWithDictCommand(UpdateCommand):
     """
     UpdateCommand is a concrete subclass of AirBnBCommand for
     updating attributes of an object with dictionary.
@@ -490,7 +504,7 @@ class UpdateWithDictCommand(AirBnBCommand):
         It returns True if the tokens adhere to the expected format,
         False otherwise.
 
-        Args:
+         Parameters:
             tokens (list[any]): A list of tokens parsed from the
             command line input.
 
@@ -537,7 +551,6 @@ class CountCommand(AirBnBCommand):
     """
     CountCommand is a concrete subclass of AirBnBCommand for
     counting the number of class Object in storage.
-
     """
 
     __tokens = {
@@ -549,7 +562,7 @@ class CountCommand(AirBnBCommand):
         Sets the tokens based on the provided values.
 
         Parameters:
-            tokens (list): A list of token values.
+            tokens (list[str]): A list of token values.
         """
         for key, value in zip(self.__tokens, tokens):
             self.__tokens[key] = value
