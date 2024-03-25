@@ -133,6 +133,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             tokens.append(function_args)
 
+        self.__current_cmd = function_name
         self.__airbnb_commands[function_name].set_tokens(tokens)
         self.__airbnb_commands[function_name].execute()
 
@@ -230,6 +231,54 @@ class HBNBCommand(cmd.Cmd):
         self.__current_cmd = ""
         return stop
 
+    def onecmd(self, line):
+        """Processes a single command line and returns a boolean
+        indicating termination.
+
+        This method serves as the entry point for processing a user-provided
+        command line. It performs the following steps:
+
+        1. Preprocessing: Calls the `precmd` method (if defined)
+            to potentially modify the input line before further processing.
+        2. Command Execution: Delegates the actual command execution
+            to the parent class (likely `cmd.Cmd`) by calling
+            `super().onecmd(line)`.
+           This invokes the appropriate command handling logic based
+           on the user input.
+        3. Postprocessing: Calls the `postcmd` method (if defined)
+           to perform any necessary actions after the command has
+           been processed. This allows for custom post-execution tasks.
+
+        Parameter:
+            line (str): The user-provided command line string.
+
+        Returns:
+            bool: True if the command indicates termination
+            (e.g., "quit"), False otherwise.
+        """
+        line = self.precmd(line)
+        stop = super().onecmd(line)
+        self.postcmd(stop, line)
+
+        return stop
+
+    def do_history(self, line):
+        """Displays the command history maintained by the command
+        interpreter.
+
+        This method iterates through the internal command
+        history (`self.__history`) and prints each command
+        entry along with its corresponding index number.
+        The index number can be used to recall a previous
+        command using its position in the history.
+
+        Parameter
+            line (str): The user input line (typically unused in
+            this implementation).
+        """
+        for i, line in enumerate(self.__history):
+            print(f"{i:02}. {line}")
+
     def add_history(self, line):
         """
         Adds a command line input to the command history,
@@ -265,6 +314,14 @@ class HBNBCommand(cmd.Cmd):
         with open(self.__history_file, "w") as file:
             for line in self.__history:
                 file.write(f"{line}\n")
+
+    def completedefault(self, *args):
+        """
+        Provides basic completion for commands without
+        specific complete_* methods.
+        """
+        modules = storage.get_models_names()
+        return [module for module in modules if module.startswith(args[0])]
 
 
 if __name__ == '__main__':
