@@ -171,9 +171,12 @@ class CreateCommand(AirBnBCommand):
     creating new objects.
     """
 
-    __tokens = {
+    def __init__(self, storage):
+        super().__init__(storage)
+
+        self.__tokens = {
             "model_name": None,
-    }
+        }
 
     def set_tokens(self, tokens):
         """
@@ -212,10 +215,14 @@ class ShowCommand(AirBnBCommand):
     ShowCommand is a concrete subclass of AirBnBCommand for
     displaying object details.
     """
-    __tokens = {
+
+    def __init__(self, storage):
+        super().__init__(storage)
+
+        self.__tokens = {
             "model_name": None,
             "instance_id": None,
-    }
+        }
 
     def set_tokens(self, tokens):
         """
@@ -253,10 +260,13 @@ class DestroyCommand(AirBnBCommand):
     deleting objects.
     """
 
-    __tokens = {
+    def __init__(self, storage):
+        super().__init__(storage)
+
+        self.__tokens = {
             "model_name": None,
             "instance_id": None,
-    }
+        }
 
     def set_tokens(self, tokens):
         """
@@ -292,9 +302,13 @@ class AllCommand(AirBnBCommand):
     AllCommand is a concrete subclass of AirBnBCommand for
     displaying all objects or objects of a specific type.
     """
-    __tokens = {
+
+    def __init__(self, storage):
+        super().__init__(storage)
+
+        self.__tokens = {
             "model_name": None,
-    }
+        }
 
     def set_tokens(self, tokens):
         """
@@ -365,13 +379,6 @@ class UpdateCommand(AbstractUpdateCommand):
     UpdateCommand is a concrete subclass of AirBnBCommand for
     updating attributes of an object.
     """
-
-    __tokens = {
-            "model_name": None,
-            "instance_id": None,
-            "attribute_name": None,
-            "attribute_value": None,
-    }
 
     def __init__(self, storage):
         super().__init__(storage)
@@ -452,12 +459,15 @@ class UpdateWithNameValuePairCommand(AbstractUpdateCommand):
     updating attributes of an object with one key value pair.
     """
 
-    __tokens = {
+    def __init__(self, storage):
+        super().__init__(storage)
+
+        self.__tokens = {
             "model_name": None,
             "instance_id": None,
             "attribute_name": None,
             "attribute_value": None,
-    }
+        }
 
     def check_tokens(self, tokens):
         """
@@ -521,11 +531,14 @@ class UpdateWithDictCommand(AbstractUpdateCommand):
     updating attributes of an object with dictionary.
     """
 
-    __tokens = {
+    def __init__(self, storage):
+        super().__init__(storage)
+
+        self.__tokens = {
             "model_name": None,
             "instance_id": None,
             "dictionary": None
-    }
+        }
 
     def check_tokens(self, tokens):
         """
@@ -585,9 +598,12 @@ class CountCommand(AirBnBCommand):
     counting the number of class Object in storage.
     """
 
-    __tokens = {
+    def __init__(self, storage):
+        super().__init__(storage)
+
+        self.__tokens = {
             "model_name": None,
-    }
+        }
 
     def set_tokens(self, tokens):
         """

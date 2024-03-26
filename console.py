@@ -27,9 +27,7 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
     __history_file = ".airbnb_cmd_history.txt"
-    __history = []
-    __MAX_HIS = 100
-    __current_cmd = ""
+    __MAX_HIST = 100
 
     __airbnb_commands = {
         "create": CreateCommand(storage),
@@ -39,6 +37,11 @@ class HBNBCommand(cmd.Cmd):
         "update": UpdateCommand(storage),
         "count": CountCommand(storage)
     }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__history = []
+        self.__current_cmd = ""
 
     def preloop(self):
         self.load_history()
@@ -291,7 +294,7 @@ class HBNBCommand(cmd.Cmd):
         self.__history.append(line)
         history_length = len(self.__history)
 
-        if history_length > self.__MAX_HIS:
+        if history_length > self.__MAX_HIST:
             self.__history.pop(0)
 
     def load_history(self):
@@ -304,9 +307,9 @@ class HBNBCommand(cmd.Cmd):
                     readline.add_history(line)
 
                 history_length = len(self.__history)
-                if history_length > self.__MAX_HIS:
-                    self.__history =\
-                        self.__history[history_length - self.__MAX_HIS:]
+                if history_length > self.__MAX_HIST:
+                    extra = history_length - self.__MAX_HIST
+                    self.__history = self.__history[extra:]
 
         except FileNotFoundError:
             pass
