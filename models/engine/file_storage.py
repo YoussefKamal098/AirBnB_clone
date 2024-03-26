@@ -50,7 +50,7 @@ class FileStorage:
         self.__objects[key] = obj
 
     def save(self):
-        """Serializes objects to JSON and saves to file """
+        """Serializes objects to JSON and saves to file"""
         serialized_objects = {
             key: obj.to_dict()
             for key, obj in self.__objects.items()
@@ -69,7 +69,7 @@ class FileStorage:
             with open(self.__file_path, "r") as file:
                 deserialized_objects = json.load(file)
 
-                FileStorage.__objects = {
+                self.__objects = {
                     key: self._deserialize(dictionary)
                     for key, dictionary in deserialized_objects.items()
                 }
