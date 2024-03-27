@@ -29,17 +29,17 @@ class HBNBCommand(cmd.Cmd):
     __history_file = ".airbnb_cmd_history.txt"
     __MAX_HIST = 100
 
-    __airbnb_commands = {
-        "create": CreateCommand(storage),
-        "show": ShowCommand(storage),
-        "destroy": DestroyCommand(storage),
-        "all": AllCommand(storage),
-        "update": UpdateCommand(storage),
-        "count": CountCommand(storage)
-    }
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.__airbnb_commands = {
+            "create": CreateCommand(storage),
+            "show": ShowCommand(storage),
+            "destroy": DestroyCommand(storage),
+            "all": AllCommand(storage),
+            "update": UpdateCommand(storage),
+            "count": CountCommand(storage)
+        }
         self.__history = []
         self.__current_cmd = ""
 
