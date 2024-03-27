@@ -37,6 +37,32 @@ class TestConsole(unittest.TestCase):
         except OSError:
             pass
 
+    def test_quit_exits(self):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertTrue(HBNBCommand().onecmd("quit"))
+
+    def test_EOF_exits(self):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertTrue(HBNBCommand().onecmd("EOF"))
+
+    def test_empty_line(self):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(""))
+            self.assertFalse(HBNBCommand().onecmd("            "))
+            self.assertEqual("", output.getvalue())
+
+    def test_help(self):
+        commands = ['EOF', 'quit', 'destroy',
+                    'create', 'update', 'show',
+                    'count', 'all']
+
+        for command in commands:
+            with self.subTest(command=command):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.assertFalse(HBNBCommand().onecmd(f"help {command}"))
+                    self.assertNotEqual(f"*** No help on {command}",
+                                        output.getvalue().strip())
+
     def test_create_displays_class_name_error(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('create')
@@ -88,6 +114,11 @@ class TestConsole(unittest.TestCase):
             self.cmd.onecmd('destroy BModel')
             self.assertEqual("** class doesn't exist **\n", output.getvalue())
 
+    def test_count_displays_class_does_not_exist(self):
+        with patch('sys.stdout', new=StringIO()) as output:
+            self.cmd.onecmd('count BModel')
+            self.assertEqual("** class doesn't exist **\n", output.getvalue())
+
     def test_destroy_displays_instance_not_found(self):
         with patch('sys.stdout', new=StringIO()) as output:
             self.cmd.onecmd('destroy BaseModel "id that doesn\'t exists"')
@@ -112,6 +143,17 @@ class TestConsole(unittest.TestCase):
                     self.cmd.onecmd(f'all {model}')
                     self.assertIn(model, output.getvalue())
                     self.assertGreaterEqual(output.getvalue().count(model), 2)
+
+    def test_instances_count(self):
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()):
+                    for _ in range(10):
+                        self.cmd.onecmd(f'create {model}')
+
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'count {model}')
+                    self.assertLessEqual(10, int(output.getvalue()))
 
     def test_all_displays_specific_class_instances(self):
         for model in self.models:
@@ -156,6 +198,18 @@ class TestConsole(unittest.TestCase):
                     self.cmd.onecmd(f'show {model} {_id}')
                     self.assertIn('attr', output.getvalue())
                     self.assertIn('value', output.getvalue())
+
+    def test_class_name_create_creates_an_instance(self):
+        for model in self.models:
+            with self.subTest(model=model):
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'{model}.create()')
+                    _id = output.getvalue()
+                    self.assertNotIn(_id, [None, ""])
+
+                with patch('sys.stdout', new=StringIO()) as output:
+                    self.cmd.onecmd(f'show {model} {_id}')
+                    self.assertIn(_id.strip('\n'), output.getvalue())
 
     def test_class_name_all_displays_instances(self):
         for model in self.models:

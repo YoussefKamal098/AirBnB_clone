@@ -59,14 +59,14 @@ class HBNBCommand(cmd.Cmd):
     def do_show(self, line):
         """
         Display the string representation of a class instance of a given id.
-        Usage: show <class> <id>
+        Usage: show <class> <id> or <class>.show(<id>)
         """
         self.__airbnb_commands["show"].execute()
 
     def do_destroy(self, line):
         """
         Delete a class instance of a given id.
-        Usage: destroy <class> <id>
+        Usage: destroy <class> <id> or <class>.destroy(<id>)
         """
         self.__airbnb_commands["destroy"].execute()
 
@@ -75,16 +75,26 @@ class HBNBCommand(cmd.Cmd):
         Display string representations of all instances of a given class.
         If no class is specified, displays all instantiated objects.
 
-        Usage: all or all <class>
+        Usage: all or all <class> or <class>.all()
         """
         self.__airbnb_commands["all"].execute()
+
+    def do_count(self, line):
+        """
+        counting the number of class Object in storage.
+
+        Usage: count <class> or <class>.count()
+        """
+        self.__airbnb_commands["count"].execute()
 
     def do_update(self, line):
         """
         Update a class instance of a given id by adding or updating
         a given attribute key/value pair or dictionary.
 
-        Usage: update <class> <id> <attribute_name> <attribute_value>
+        Usage: update <class> <id> <attribute_name> <attribute_value> or
+              <class>.update(<id>, <attribute_name>, <attribute_value>) or
+              <class>.update(<id>, <dictionary>)
         """
         self.__airbnb_commands["update"].execute()
 
