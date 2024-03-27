@@ -213,8 +213,7 @@ class HBNBCommand(cmd.Cmd):
             or an empty list if parsing fails.
         """
         try:
-            tokens = shlex.split(line)
-            return tokens
+            return shlex.split(line)
         except ValueError as err:
             print(err)
             return []
