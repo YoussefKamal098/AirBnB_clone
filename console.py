@@ -10,12 +10,14 @@ import re
 import shlex
 import ast
 import subprocess
-from console_commands import CreateCommand
-from console_commands import ShowCommand
-from console_commands import AllCommand
-from console_commands import DestroyCommand
-from console_commands import UpdateCommand
-from console_commands import CountCommand
+from console_commands import (
+    CreateCommand,
+    ShowCommand,
+    AllCommand,
+    DestroyCommand,
+    UpdateCommand,
+    CountCommand
+)
 from models import storage
 
 

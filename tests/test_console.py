@@ -8,6 +8,7 @@ import unittest
 from io import StringIO
 from unittest.mock import patch
 from console import HBNBCommand
+from models import storage
 
 
 class TestConsole(unittest.TestCase):
@@ -15,8 +16,7 @@ class TestConsole(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """sets up the test console"""
-        cls.models = ['BaseModel', 'User', 'Place',
-                      'City', 'Amenity', 'State', 'Review']
+        cls.models = storage.get_models_names()
         try:
             os.rename("file.json", "tmp")
         except OSError:
